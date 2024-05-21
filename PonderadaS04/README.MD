@@ -30,12 +30,23 @@ npm run dev
 
 ### Simulador de Turtlebot3 (Webots)
 
+Caso não tenha o Webots instalado, siga as instruções em: [Webots](https://cyberbotics.com/doc/guide/installation-procedure)
+
 ```bash
 
 ros2 launch webots_ros2_turtlebot robot_launch.py
 
 ```
 
+Se for usar o robô real basta rodar o bringup do Turtlebot3.
+
+```bash
+
+ros2 launch turtlebot3_bringup robot_launch.py
+
+```
+
 ## Demonstração
 
-![Demonstração](https://youtu.be/kUAR_7Hk6uQ)
+
+![Watch the video](https://youtu.be/kUAR_7Hk6uQ?si=4k2MVY8mGsO_s8Na)
