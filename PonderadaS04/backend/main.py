@@ -2,6 +2,9 @@ from fastapi import FastAPI, WebSocket
 from classes.TurtleBot import init_robot, spin_robot
 import threading
 import time
+from rclpy.node import Node
+import rclpy
+from std_srvs.srv import Empty
 
 # Inicializar o ROS 2 e criar o robô TurtleBot
 robot = init_robot()
@@ -54,5 +57,39 @@ async def websocket_endpoint(websocket: WebSocket):
             else:
                 print("Comando não reconhecido")
 
-    except WebSocketDisconnect:
-        print("Cliente desconectado")
+    except Exception as e:
+        print(f"Erro: {e}")
+        await websocket.close()
+
+
+# Rota para parada de emergência do robô
+@app.get("/emergency_stop")
+async def emergency_stop():
+
+    # Verificar se o ROS 2 já foi iniciado
+    if rclpy.ok() == False:
+        rclpy.init()
+    else:
+        print("ROS/Rclpy já iniciado")
+
+    # Criar um nó para chamar o serviço de parada de emergência
+    node =  Node('emergency_stop')
+
+    # Criar um cliente para chamar o serviço de parada de emergência que foi criado no nó do robô
+    client = node.create_client(Empty, 'emergency_stop')
+
+    while not client.wait_for_service(timeout_sec=1.0):
+        print('Serviço não disponível, esperando...')
+
+    request = Empty.Request()
+    future = client.call_async(request)
+    rclpy.spin_until_future_complete(node, future)
+
+    if future.result() is not None:
+        # Desligar esse nó do ROS 2
+        node.destroy_node()
+        rclpy.shutdown()
+        return {"status": "success"}
+    
+    else:
+        return {"status": "failed"}

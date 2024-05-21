@@ -6,6 +6,7 @@ const TurtleControl = () => {
     const [latency, setLatency] = useState(null); // State para armazenar a latência
     const lastCommandRef = useRef(null); // Ref para armazenar o último comando enviado
     const isKeyDownRef = useRef({}); // Ref para armazenar quais teclas estão pressionadas
+    const [lastCommand, setLastCommand] = useState(''); // Armazenar o último comando enviado
 
     useEffect(() => {
 
@@ -39,6 +40,32 @@ const TurtleControl = () => {
             ws.send(`${command}|${timestamp}`);
             console.log(`Comando enviado: ${command} às ${timestamp}`);
             lastCommandRef.current = command;
+            
+            if (command === 'foward') {
+                setLastCommand('frente');
+            } else if (command === 'backward') {
+                setLastCommand('trás');
+            } else if (command === 'left') {
+                setLastCommand('esquerda');
+            } else if (command === 'right') {
+                setLastCommand('direita');
+            }
+        }
+    };
+
+    // Função para chamar o stop de emergência
+    const callEmergencyStop = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/emergency_stop', {
+                method: 'GET',
+            });
+            if (response.ok) {
+                console.log('Emergency stop called successfully');
+            } else {
+                console.error('Failed to call emergency stop');
+            }
+        } catch (error) {
+            console.error('Error calling emergency stop:', error);
         }
     };
 
@@ -67,6 +94,9 @@ const TurtleControl = () => {
                 case 'd':
                 case 'D':
                     sendCommand('right');
+                    break;
+                case ' ':
+                    callEmergencyStop();
                     break;
                 default:
                     break;
@@ -129,6 +159,21 @@ const TurtleControl = () => {
                     <button onMouseDown={() => handleMouseDown('backward')} onMouseUp={handleMouseUp}>Trás</button>
                 </div>
                 {latency && <div>Latencia do envio do comando: {latency}</div>}
+            </div>
+            <div>
+                <h2>Log robô</h2>
+                <div>Robô indo para {lastCommand}</div>
+            </div>
+            <div>
+                <h2>Parada de emergência</h2>
+                <button onClick={callEmergencyStop}>Parada de emergência</button>
+            </div>
+            <div>
+                <h2>Comandos</h2>
+                <ul>
+                    <li>Setas do teclado ou W, A, S, D: Movimentar</li>
+                    <li>Barra de espaço: Parada de emergência</li>
+                </ul>
             </div>
         </div>
     );

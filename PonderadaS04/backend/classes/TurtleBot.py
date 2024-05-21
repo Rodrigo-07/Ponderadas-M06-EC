@@ -1,6 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist, Vector3
+from std_srvs.srv import Empty
 import time
 
 # Classe para controlar o robô TurtleBot
@@ -10,6 +11,16 @@ class TurtleBot(Node):
         super().__init__('turtlebot')
 
         self.publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)
+
+        # Criar serviço de parada de emergência
+        self.create_service(Empty, 'emergency_stop', self.emergency_stop)
+
+    # Função para parar o robô em caso de emergência
+    def emergency_stop(self, request, response):
+    
+        self.stop()
+        rclpy.shutdown()
+        return response
 
     # Função para enviar comandos de movimento para o robô
     def move(self, linear: Vector3, angular: Vector3, duration: float):
@@ -40,10 +51,6 @@ class TurtleBot(Node):
 
     def rotate_right(self, speed: float, duration: float):
         self.move(Vector3(), Vector3(z=-speed), duration)
-
-    # Seta todas as velocidades para 0 para parar o robô imediatamente
-    def emergency_stop(self):
-        self.move(Vector3(x=0.0, y=0.0, z=0.0), Vector3(), 0.0)
 
 # Inicialização do ROS 2 e do nó do robô
 def init_robot():
