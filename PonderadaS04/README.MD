@@ -49,4 +49,4 @@ ros2 launch turtlebot3_bringup robot_launch.py
 ## Demonstração
 
 
-![Watch the video](https://youtu.be/kUAR_7Hk6uQ?si=4k2MVY8mGsO_s8Na)
+https://youtu.be/kUAR_7Hk6uQ?si=4k2MVY8mGsO_s8Na
