@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from classes.TurtleBot import init_robot, spin_robot
 import threading
 import time
@@ -7,6 +7,7 @@ import rclpy
 from std_srvs.srv import Empty
 import cv2
 import base64
+import asyncio
 
 # Inicializar o ROS 2 e criar o robô TurtleBot
 robot = init_robot()
@@ -32,6 +33,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
             # Receber o comando de movimento do robô
             data = await websocket.receive_text()
+            print(data)
 
             # Calcular a latência da mensagem
             current_time = time.time()
@@ -44,20 +46,7 @@ async def websocket_endpoint(websocket: WebSocket):
             await websocket.send_text(f"{latency} segundos")
 
             # Interpretar o comando de movimento e enviar para o robô
-            if command == "forward":
-                robot.move_forward(0.5, 1.0)
-            elif command == "backward":
-                robot.move_backward(0.5, 1.0)
-            elif command == "left":
-                robot.rotate_left(0.5, 1.0)
-            elif command == "right":
-                robot.rotate_right(0.5, 1.0)
-            elif command == "stop":
-                robot.stop()
-            elif command == "emergency_stop":
-                robot.emergency_stop()
-            else:
-                print("Comando não reconhecido")
+            robot.state = command
 
     except Exception as e:
         print(f"Erro: {e}")
@@ -99,35 +88,31 @@ async def emergency_stop():
 # Rota para capturar a imagem da câmera do robô
 @app.websocket("/ws_camera")
 async def websocket_camera(websocket: WebSocket):
-
-    # Pegar a imagem da camera
     camera_img = cv2.VideoCapture(0)
-
     await websocket.accept()
+
+    if not camera_img.isOpened():
+        print("Erro ao abrir a câmera")
+        await websocket.close()
+        return
 
     try:
         while camera_img.isOpened():
-
-            # Ler a imagem da câmera
             ret, frame = camera_img.read()
+            if not ret:
+                break
 
-            # Converter a imagem para bytes
             ret, buffer = cv2.imencode('.jpg', frame)
-
-            # Converter para base64
             frame_base64 = base64.b64encode(buffer).decode('utf-8')
-
-            # Pegar o tempo atual
             current_time = int(time.time() * 1000)
-
-            # Enviar a imagem para o cliente
             await websocket.send_json({"image": frame_base64, "time": current_time})
 
+            await asyncio.sleep(0.1)
+    except WebSocketDisconnect:
+        print("WebSocket desconectado")
     except Exception as e:
         print(f"Erro: {e}")
-        await websocket.close()
-
-
-    except Exception as e:
-        print(f"Erro: {e}")
-        await websocket.close()
+    finally:
+        camera_img.release()
+        if not websocket.client_state == WebSocketDisconnect:
+            await websocket.close()
