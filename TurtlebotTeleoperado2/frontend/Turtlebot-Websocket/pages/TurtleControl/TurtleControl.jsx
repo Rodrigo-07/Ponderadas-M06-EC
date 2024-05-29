@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 
+import Video_ws from '../../src/components/videoWS/videoWS';
+
 const TurtleControl = () => {
     // State para armazenar o WebSocket
     const [ws, setWs] = useState(null);
@@ -148,6 +150,10 @@ const TurtleControl = () => {
     return (
         <div>
             <h1>Turtlebot3 Control 🐢</h1>
+            <div>
+                <h2>Webcam</h2>
+                <Video_ws />
+            </div>
             <div>
                 <h2>Use as setas do teclado ou botões para controlar</h2>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '35px'}}>

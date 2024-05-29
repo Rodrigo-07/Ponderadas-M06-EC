@@ -5,6 +5,7 @@ import './App.css'
 
 import WebSocketMsg from '../pages/WebSocketMsg/WebSocketMsg';
 import TurtleControl from '../pages/TurtleControl/TurtleControl';
+import Video_ws from './components/videoWS/videoWS';
 
 function App() {
   const [count, setCount] = useState(0)
