@@ -106,7 +106,7 @@ async def websocket_camera(websocket: WebSocket):
     await websocket.accept()
 
     try:
-        while True:
+        while camera_img.isOpened():
 
             # Ler a imagem da câmera
             ret, frame = camera_img.read()
@@ -117,8 +117,15 @@ async def websocket_camera(websocket: WebSocket):
             # Converter para base64
             frame_base64 = base64.b64encode(buffer).decode('utf-8')
 
+            # Pegar o tempo atual
+            current_time = int(time.time() * 1000)
+
             # Enviar a imagem para o cliente
-            await websocket.send_text(frame_base64)
+            await websocket.send_json({"image": frame_base64, "time": current_time})
+
+    except Exception as e:
+        print(f"Erro: {e}")
+        await websocket.close()
 
 
     except Exception as e:

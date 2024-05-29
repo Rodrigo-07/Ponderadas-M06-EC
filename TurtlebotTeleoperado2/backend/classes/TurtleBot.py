@@ -15,6 +15,8 @@ class TurtleBot(Node):
         # Criar serviço de parada de emergência
         self.create_service(Empty, 'emergency_stop', self.emergency_stop)
 
+        self.state = "stopped"
+
     # Função para parar o robô em caso de emergência
     def emergency_stop(self, request, response):
     
@@ -23,15 +25,15 @@ class TurtleBot(Node):
         return response
 
     # Função para enviar comandos de movimento para o robô
-    def move(self, linear: Vector3, angular: Vector3, duration: float):
+    def move(self, state):
         msg = Twist()
         msg.linear = linear
         msg.angular = angular
         self.publisher_.publish(msg)
 
-        # Esperar o tempo de duração antes de para o movimento
-        time.sleep(duration)  # Simples delay para esperar antes de parar o movimento
-        self.stop()
+        # Movimentação no robÔ baseado no estado
+
+        
 
     #
     def stop(self):
