@@ -36,10 +36,10 @@ async def websocket_endpoint(websocket: WebSocket):
             print(data)
 
             # Calcular a latência da mensagem
-            current_time = time.time()
+            current_time = int(time.time() * 1000)
             message_data = data.split('|') # Quebra a string recebida em comando e tempo de envio
             command = message_data[0] # Comando de movimento
-            sent_time = float(message_data[1])
+            sent_time = int(message_data[1])
             latency = current_time - sent_time # Calcula a latência da mensagem
 
             print(f"Msg recebida: {command} com {latency} s de latência")

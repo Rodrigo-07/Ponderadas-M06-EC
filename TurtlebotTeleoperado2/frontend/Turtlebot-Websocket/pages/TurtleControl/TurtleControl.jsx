@@ -32,7 +32,7 @@ const TurtleControl = () => {
 
     const sendCommand = (command) => {
         if (wsControl && command !== lastCommandRef.current) {
-            const timestamp = Date.now() / 1000;
+            const timestamp = Date.now();
             wsControl.send(`${command}|${timestamp}`);
             console.log(`${command}|${timestamp}`);
             console.log(`Comando enviado: ${command} às ${timestamp}`);
