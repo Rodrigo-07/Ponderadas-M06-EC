@@ -53,20 +53,6 @@ class TurtleBot(Node):
         stop_msg = Twist()
         self.publisher_.publish(stop_msg)
 
-    def move_forward(self, speed: float):
-        # Criar um Vector3 com a velocidade linear
-        self.move(Vector3(x=speed, y=0.0, z=0.0), Vector3())
-
-    def move_backward(self, speed: float):
-        self.move(Vector3(x=-speed, y=0.0, z=0.0), Vector3())
-
-    def rotate_left(self, speed: float):
-        # Criar um Vector3 com a velocidade angular
-        self.move(Vector3(), Vector3(z=speed))
-
-    def rotate_right(self, speed: float):
-        self.move(Vector3(), Vector3(z=-speed))
-
 # Inicialização do ROS 2 e do nó do robô
 def init_robot():
     rclpy.init()

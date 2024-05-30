@@ -9,6 +9,7 @@ const TurtleControl = () => {
     const [lastCommand, setLastCommand] = useState('');
 
     useEffect(() => {
+        // Criação do WebSocket de movimentação
         const websocketControl = new WebSocket('ws://127.0.0.1:8000/ws_control');
         setWsControl(websocketControl);
 
@@ -30,14 +31,18 @@ const TurtleControl = () => {
         };
     }, []);
 
+    // Função para enviar comandos para o robô (backend)
     const sendCommand = (command) => {
+        // Verifica se o WebSocket de movimentação está ativo e se o comando é diferente do último enviado
         if (wsControl && command !== lastCommandRef.current) {
             const timestamp = Date.now();
+            // Envia o comando e o timestamp para o WebSocket de movimentação
             wsControl.send(`${command}|${timestamp}`);
             console.log(`${command}|${timestamp}`);
             console.log(`Comando enviado: ${command} às ${timestamp}`);
             lastCommandRef.current = command;
             
+            // Atualiza o último comando enviado para exibição na tela
             if (command === 'forward') {
                 setLastCommand('frente');
             } else if (command === 'backward') {
@@ -50,21 +55,24 @@ const TurtleControl = () => {
         }
     };
 
+    // Função para chamar a parada de emergência
     const callEmergencyStop = async () => {
         try {
             const response = await fetch('http://127.0.0.1:8000/emergency_stop', {
                 method: 'GET',
             });
             if (response.ok) {
-                console.log('Emergency stop called successfully');
+                console.log('Parada de emergência chamada com sucesso');
             } else {
-                console.error('Failed to call emergency stop');
+                console.error('Falha ao chamar parada de emergência');
             }
         } catch (error) {
-            console.error('Error calling emergency stop:', error);
+            console.error('Erro ao chamar a parada de emergência:', error);
         }
     };
 
+
+    // Funções para controlar o robô com o teclado
     const handleKeyDown = useCallback((event) => {
         if (!isKeyDownRef.current[event.key]) {
             isKeyDownRef.current[event.key] = true;
@@ -98,6 +106,7 @@ const TurtleControl = () => {
         }
     }, [wsControl]);
 
+    // Função para enviar o comando de parada quando a tecla é solta
     const handleKeyUp = useCallback((event) => {
         isKeyDownRef.current[event.key] = false;
         switch (event.key) {
@@ -120,6 +129,7 @@ const TurtleControl = () => {
         }
     }, [wsControl]);
 
+    // Adiciona e remove os event listeners para controlar o robô com o teclado
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
@@ -129,11 +139,12 @@ const TurtleControl = () => {
         };
     }, [handleKeyDown, handleKeyUp]);
 
+    // Função para detectar o click em um tecla e executar o comando
     const handleMouseDown = (direction) => {
-        console.log('Mouse down:', direction);
         sendCommand(direction);
     };
 
+    // Função para enviar o comando de parada quando o botão do mouse é solto
     const handleMouseUp = () => {
         sendCommand('stopped');
     };

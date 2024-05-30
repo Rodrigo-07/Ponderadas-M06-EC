@@ -76,6 +76,7 @@ nav2-common==1.1.14
 nav2-msgs==1.1.14
 nav2-simple-commander==1.0.0
 numpy==1.26.4
+opencv-python==4.9.0.80
 orjson==3.10.3
 osrf-pycommon==2.0.2
 pcl-msgs==1.0.0

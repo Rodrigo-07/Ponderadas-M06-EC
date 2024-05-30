@@ -88,22 +88,26 @@ async def emergency_stop():
 # Rota para capturar a imagem da câmera do robô
 @app.websocket("/ws_camera")
 async def websocket_camera(websocket: WebSocket):
+
+    # Inicializar a câmera do robô
     camera_img = cv2.VideoCapture(0)
     await websocket.accept()
 
+    # Verificar se a câmera foi aberta corretamente
     if not camera_img.isOpened():
         print("Erro ao abrir a câmera")
         await websocket.close()
         return
 
     try:
+        # Manter a conexão com o websocket apenas quando a camera está aberta
         while camera_img.isOpened():
             ret, frame = camera_img.read()
             if not ret:
                 break
 
             ret, buffer = cv2.imencode('.jpg', frame)
-            frame_base64 = base64.b64encode(buffer).decode('utf-8')
+            frame_base64 = base64.b64encode(buffer).decode('utf-8') # Para base6
             current_time = int(time.time() * 1000)
             await websocket.send_json({"image": frame_base64, "time": current_time})
 
@@ -113,6 +117,7 @@ async def websocket_camera(websocket: WebSocket):
     except Exception as e:
         print(f"Erro: {e}")
     finally:
+        # Fechar a câmera e o websocket quando a conexão é encerrada
         camera_img.release()
         if not websocket.client_state == WebSocketDisconnect:
             await websocket.close()

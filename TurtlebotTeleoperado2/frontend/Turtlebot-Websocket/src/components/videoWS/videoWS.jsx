@@ -1,7 +1,11 @@
 import React, { useEffect } from 'react';
 
 const Video_ws = () => {
+
+    // useEffect para facilitar a conexão com o WebSocket da câmera
     useEffect(() => {
+
+        // Criação do WebSocket da câmera
         const websocketCamera = new WebSocket('ws://127.0.0.1:8000/ws_camera');
 
         websocketCamera.onopen = () => {
