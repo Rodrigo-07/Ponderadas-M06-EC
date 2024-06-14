@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <title>WebCNN</title>
+    </head>
+    <body>
+        <h1>WebCNN</h1>
+        <p>Aplicação top para prever sua letra feia!!!!!</p>
+        <form action="/predict" method="post" enctype="multipart/form-data">
+            <input type="file" name="image" />
+            <input type="submit" value="Upload" />
+        </form>
+
+        <!-- Resposta HTML do endpoint -->
+        {% if prediction %}
+            <h3>Seu número é o <b>{{prediction}}</b></h3>
+        {% endif %}
+    </body>
+</html>
