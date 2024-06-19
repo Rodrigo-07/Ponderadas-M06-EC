@@ -4,15 +4,30 @@
     </head>
     <body>
         <h1>WebCNN</h1>
-        <p>Aplicação top para prever sua letra feia!!!!!</p>
-        <form action="/predict" method="post" enctype="multipart/form-data">
+        <h2>Aplicação top para prever sua letra feia!!!!!</h2>
+
+        <h3>Modelo com CNN:</h3>
+
+        <form action="/predictCNN" method="post" enctype="multipart/form-data">
             <input type="file" name="image" />
             <input type="submit" value="Upload" />
         </form>
 
-        <!-- Resposta HTML do endpoint -->
-        {% if prediction %}
-            <h3>Seu número é o <b>{{prediction}}</b></h3>
+        {% if predictionCNN %}
+        <h4>O modelo com CNN disse que seu número é o <b>{{predictionCNN}}</b></h4>
         {% endif %}
+
+        <h3>Modelo linear:</h3>
+        <form action="/predictLinear" method="post" enctype="multipart/form-data">
+            <input type="file" name="image" />
+            <input type="submit" value="Upload" />
+        </form>
+
+
+        {% if predictionLinear %}
+        <h4>O modelo linear disse que seu número é o <b>{{predictionLinear}}</b></h4>
+        {% endif %}
+
+
     </body>
 </html>
