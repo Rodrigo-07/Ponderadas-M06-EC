@@ -16,7 +16,7 @@ A terceira camada convolucional possui 64 filtros de tamanho 5x5 com stride de 2
 
 Finalmente, a camada de saída (Dense) possui 10 unidades com a função de ativação softmax, produzindo probabilidades para classificar a imagem em uma das 10 classes.
 
-´´´python
+```python
 
 model = Sequential()
 model.add(Conv2D(filters=32, kernel_size=(5,5), padding='same', strides=1, activation='relu', data_format='channels_last', kernel_initializer='he_normal', input_shape=(28, 28, 1)))
@@ -39,7 +39,7 @@ model.add(BatchNormalization())
 model.add(Dropout(0.5))
 model.add(Dense(10, activation='softmax'))
 
-´´´
+```
 
 O modelo foi treinado com o otimizador Adam, com função de perda entropia cruzada categórica e com 50 epocas. A acurácia foi utilizada como métrica para avaliar o desempenho do modelo durante o treinamento.
 
@@ -47,7 +47,7 @@ O modelo foi treinado com o otimizador Adam, com função de perda entropia cruz
 
 A arquitetura inclui apenas uma camada densa com 10 neurônios, cada um correspondendo a uma das classes de saída. A função de ativação softmax é utilizada na camada de saída para produzir uma distribuição de probabilidade sobre as 10 classes, permitindo a classificação da entrada. Este modelo é simples e serve como um ponto de partida básico para tarefas de classificação de imagens.
 
-´´´python
+```python
 
 model = Sequential()
 # Criação do modelo linear
@@ -55,7 +55,7 @@ model = Sequential()
 # Neumronios, ativação, input_shape
 model.add(Dense(10, activation='softmax', input_shape=(28*28,)))
 
-´´´
+```
 
 O modelo foi treinado com o otimizador Adam, com a função media dos erros quadrados e com 10 epocas. A acurácia foi utilizada como métrica para avaliar o desempenho do modelo durante o treinamento.
 
