@@ -65,6 +65,28 @@ O modelo linear simples consiste em uma única camada densa com 10 neurônios e 
 
 Por outro lado, o modelo coolucional tem um tempo de treinamento mais lento devido à maior quantidade de parâmetros e operações computacionais necessárias (aproximademente 40 minutos no TPU do Colab). No entanto, ele geralmente oferece um desempenho melhor em termos de precisão e possui uma melhor capacidade de generalização, sendo capaz de capturar representações mais complexas dos dados. O tempo de inferência é mais lento em comparação ao modelo linear simples devido à maior quantidade de operações envolvidas.
 
+## Rotas backend
+
+## Resumo das Rotas para Classificação de Digitos MNIST
+
+**API:**
+
+* **Rota Principal (/):**
+    * GET: Renderiza página inicial (formulário para upload de imagem?).
+* **Rota CNN (/predictCNN/):**
+    * POST:
+        * Recebe imagem via form (campo `image`).
+        * Classifica com modelo CNN.
+        * Retorna JSON: `predictionCNN` (nome do dígito previsto).
+* **Rota Linear (/predictLinear/):**
+    * POST:
+        * Recebe imagem via form (campo `image`).
+        * Classifica com modelo Linear.
+        * Retorna JSON: `predictionLinear` (nome do dígito previsto).
+
+* Imagens salvas temporariamente como `image.png`.
+* Modelos: `modelo_mnist_cnn_top.h5` e `modelo_mnist_linear.h5`.
+
 ## Resultados
 
 O modelo de CNN obteve uma acurácia de 99.81% no conjunto de teste, enquanto o modelo linear obteve uma acurácia de 97.92%.
