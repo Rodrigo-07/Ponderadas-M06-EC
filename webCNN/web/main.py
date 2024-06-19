@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify
 import cv2
 import numpy as np
 from tensorflow.keras.models import load_model
@@ -7,7 +7,7 @@ import os
 app = Flask(__name__)
 
 # Carregar o modelo
-model_cnn = load_model('../modelo_mnist.h5')
+model_cnn = load_model('../modelo_mnist_cnn_top.h5')
 model_linear = load_model('../modelo_mnist_linear.h5')
 
 # Função para processar a imagem
@@ -24,9 +24,9 @@ def process_image(image, model):
         return image
     elif model == "Linear":
         image = cv2.imread(image, cv2.IMREAD_GRAYSCALE)
-        image = cv2.resize(image, (28*28))
+        image = cv2.resize(image, (28, 28))
         image = image / 255.0
-        image = np.expand_dims(image, axis=-1)
+        image = image.flatten()
         image = np.expand_dims(image, axis=0)
 
         return image
@@ -70,7 +70,7 @@ def predictCNN():
     # Excluir a imagem
     os.remove('image.png')
 
-    return render_template('index.html', predictionCNN=class_name)
+    return jsonify(predictionCNN=class_name)
 
 @app.route('/predictLinear/', methods=['POST'])
 def predictLinear():
@@ -88,7 +88,7 @@ def predictLinear():
     # Excluir a imagem
     os.remove('image.png')
 
-    return render_template('index.html', predictionLinear=class_name)
+    return jsonify(predictionLinear=class_name)
 
 if __name__ == '__main__':
     app.run()

@@ -1,33 +1,61 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <title>WebCNN</title>
-    </head>
-    <body>
-        <h1>WebCNN</h1>
-        <h2>Aplicação top para prever sua letra feia!!!!!</h2>
+<head>
+    <title>WebCNN</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>WebCNN</h1>
+    <h2>Aplicação top para prever sua letra feia!!!!!</h2>
 
-        <h3>Modelo com CNN:</h3>
+    <h3>Modelo com CNN:</h3>
+    <form id="cnnForm" enctype="multipart/form-data">
+        <input type="file" name="image" id="cnnImage" />
+        <input type="submit" value="Upload" />
+    </form>
 
-        <form action="/predictCNN" method="post" enctype="multipart/form-data">
-            <input type="file" name="image" />
-            <input type="submit" value="Upload" />
-        </form>
+    <h4 id="cnnResult"></h4>
 
-        {% if predictionCNN %}
-        <h4>O modelo com CNN disse que seu número é o <b>{{predictionCNN}}</b></h4>
-        {% endif %}
+    <h3>Modelo linear:</h3>
+    <form id="linearForm" enctype="multipart/form-data">
+        <input type="file" name="image" id="linearImage" />
+        <input type="submit" value="Upload" />
+    </form>
 
-        <h3>Modelo linear:</h3>
-        <form action="/predictLinear" method="post" enctype="multipart/form-data">
-            <input type="file" name="image" />
-            <input type="submit" value="Upload" />
-        </form>
+    <h4 id="linearResult"></h4>
 
+    <script>
+        $(document).ready(function() {
+            $('#cnnForm').submit(function(event) {
+                event.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    type: 'POST',
+                    url: '/predictCNN/',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $('#cnnResult').html("O modelo com CNN disse que seu número é o <b>" + response.predictionCNN + "</b>");
+                    }
+                });
+            });
 
-        {% if predictionLinear %}
-        <h4>O modelo linear disse que seu número é o <b>{{predictionLinear}}</b></h4>
-        {% endif %}
-
-
-    </body>
+            $('#linearForm').submit(function(event) {
+                event.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    type: 'POST',
+                    url: '/predictLinear/',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $('#linearResult').html("O modelo linear disse que seu número é o <b>" + response.predictionLinear + "</b>");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
 </html>
